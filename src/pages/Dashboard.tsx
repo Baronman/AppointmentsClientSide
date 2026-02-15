@@ -148,7 +148,8 @@ export default function Dashboard() {
             {appointments.map((a) => (
               <tr key={a.id}>
                 <td style={{ padding: "8px 0" }}>
-                  {a.service?.name ?? "Unknown"}
+                  {a.service?.[0]?.name ?? "Unknown"}
+
                 </td>
                 <td style={{ padding: "8px 0" }}>
                   {new Date(a.start_time).toLocaleString()}

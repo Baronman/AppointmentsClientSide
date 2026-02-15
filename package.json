@@ -2,7 +2,7 @@
   "name": "appointment-app",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://<your-username>.github.io/<repo-name>",
+  "homepage": "https://baronman.github.io/AppointmentsClientSide/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -11,18 +11,18 @@
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.32.0",
-    "dayjs": "^1.12.9",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-router-dom": "^6.14.1"
-  },
-  "devDependencies": {
-    "@types/react": "^18.2.21",
-    "@types/react-dom": "^18.2.7",
-    "@vitejs/plugin-react": "^3.1.0",
-    "typescript": "^5.3.0",
-    "vite": "^5.0.0",
-    "gh-pages": "^5.0.0"
-  }
+  "react": "^18.2.0",
+  "react-dom": "^18.2.0",
+  "react-router-dom": "^6.14.1",
+  "@supabase/supabase-js": "^2.32.0",
+  "dayjs": "^1.11.19"
+},
+"devDependencies": {
+  "vite": "^5.4.21",
+  "@vitejs/plugin-react": "^4.0.0",
+  "typescript": "^5.3.0",
+  "gh-pages": "^5.0.0",
+  "@types/react": "^18.2.21",
+  "@types/react-dom": "^18.2.7"
+}
 }
