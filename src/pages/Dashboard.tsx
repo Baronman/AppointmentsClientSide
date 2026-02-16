@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
+
+type Service = {
+  id: number;
+  name: string;
+  duration_minutes: number;
+  price: number;
+};
 
 type AppointmentRow = {
   id: number;
@@ -8,34 +15,19 @@ type AppointmentRow = {
   end_time: string;
   status: string;
   created_at: string;
-  service: {
-    name: string;
-    duration_minutes: number;
-    price: number;
-  }[];
+  service: Service | null;
 };
-
 
 export default function Dashboard() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
-  const [email, setEmail] = useState<string>("");
+  const [errorMsg, setErrorMsg] = useState("");
   const [appointments, setAppointments] = useState<AppointmentRow[]>([]);
-  const [errorMsg, setErrorMsg] = useState<string>("");
 
-  const loadUserAndAppointments = async () => {
+  const loadAppointments = async () => {
     setLoading(true);
     setErrorMsg("");
-
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !userData.user) {
-      navigate("/login");
-      return;
-    }
-
-    setEmail(userData.user.email ?? "");
 
     const { data, error } = await supabase
       .from("appointments")
@@ -46,40 +38,25 @@ export default function Dashboard() {
         end_time,
         status,
         created_at,
-        service:service_id (
+        service:services (
+          id,
           name,
           duration_minutes,
           price
         )
       `
       )
-      .eq("user_id", userData.user.id)
       .order("start_time", { ascending: true });
 
     if (error) {
       setErrorMsg(error.message);
       setAppointments([]);
     } else {
-      setAppointments((data ?? []) as AppointmentRow[]);
+      // Supabase returns "any" so we cast it
+      setAppointments((data ?? []) as unknown as AppointmentRow[]);
     }
 
     setLoading(false);
-  };
-
-  const cancelAppointment = async (id: number) => {
-    setErrorMsg("");
-
-    const { error } = await supabase
-      .from("appointments")
-      .update({ status: "CANCELLED" })
-      .eq("id", id);
-
-    if (error) {
-      setErrorMsg(error.message);
-      return;
-    }
-
-    loadUserAndAppointments();
   };
 
   const logout = async () => {
@@ -88,8 +65,7 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    loadUserAndAppointments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadAppointments();
   }, []);
 
   if (loading) return <div style={{ padding: 16 }}>Loading...</div>;
@@ -99,24 +75,34 @@ export default function Dashboard() {
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
           <h1>Dashboard</h1>
-          <div>Logged in as: {email}</div>
+          <div style={{ color: "#555" }}>
+            View appointments and manage admin pages.
+          </div>
         </div>
 
-         <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-        <button onClick={() => navigate("/book")}>Book Appointment</button>
-        <button onClick={() => navigate("/admin/services")}>Manage Services</button>
-        <button onClick={() => navigate("/admin/appointments")}>View Appointments (Admin)</button>
-      </div>
+        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <button onClick={logout}>Logout</button>
+        </div>
       </div>
 
-      <h2 style={{ marginTop: 24 }}>My Appointments</h2>
+      <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+        <button onClick={() => navigate("/book")}>Book Appointment</button>
+        <button onClick={() => navigate("/admin/services")}>
+          Manage Services
+        </button>
+        <button onClick={() => navigate("/admin/appointments")}>
+          Admin Appointments
+        </button>
+      </div>
 
       {errorMsg && (
-        <div style={{ color: "crimson", marginBottom: 12 }}>{errorMsg}</div>
+        <div style={{ color: "crimson", marginTop: 16 }}>{errorMsg}</div>
       )}
 
+      <h2 style={{ marginTop: 24 }}>All Appointments</h2>
+
       {appointments.length === 0 ? (
-        <div>No appointments yet.</div>
+        <div style={{ marginTop: 12 }}>No appointments found.</div>
       ) : (
         <table
           style={{
@@ -140,7 +126,7 @@ export default function Dashboard() {
                 Status
               </th>
               <th style={{ textAlign: "left", borderBottom: "1px solid #ccc" }}>
-                Actions
+                Price
               </th>
             </tr>
           </thead>
@@ -149,8 +135,7 @@ export default function Dashboard() {
             {appointments.map((a) => (
               <tr key={a.id}>
                 <td style={{ padding: "8px 0" }}>
-                  {a.service?.[0]?.name ?? "Unknown"}
-
+                  {a.service?.name ?? "N/A"}
                 </td>
                 <td style={{ padding: "8px 0" }}>
                   {new Date(a.start_time).toLocaleString()}
@@ -160,11 +145,7 @@ export default function Dashboard() {
                 </td>
                 <td style={{ padding: "8px 0" }}>{a.status}</td>
                 <td style={{ padding: "8px 0" }}>
-                  {a.status !== "CANCELLED" && (
-                    <button onClick={() => cancelAppointment(a.id)}>
-                      Cancel
-                    </button>
-                  )}
+                  {a.service ? `$${Number(a.service.price).toFixed(2)}` : "-"}
                 </td>
               </tr>
             ))}

@@ -19,7 +19,7 @@ type Appointment = {
 };
 
 
-export default function Appointments() {
+export default function AdminAppointments() {
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,7 +77,7 @@ export default function Appointments() {
     <div style={{ padding: 16 }}>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         <div>
-          <h1>Admin: Appointments</h1>
+          <h1>Admin: Admin</h1>
           <div style={{ color: "#555" }}>
             View all appointments booked by clients.
           </div>
