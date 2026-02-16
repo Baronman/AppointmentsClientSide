@@ -5,7 +5,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import BookAppointment from "./pages/BookAppointment";
 import Services from "./pages/Admin/Services";
-import Appointments from "./pages/Admin/Appointments";
+import Appointments from "./pages/Admin/AdminAppointments";
 // import AdminAppointments from "./pages/Admin/Appointments"; // if you made it
 
 export default function App() {
