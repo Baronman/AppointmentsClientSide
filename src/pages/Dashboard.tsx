@@ -102,10 +102,11 @@ export default function Dashboard() {
           <div>Logged in as: {email}</div>
         </div>
 
-        <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-          <Link to="/book">Book Appointment</Link>
-          <button onClick={logout}>Logout</button>
-        </div>
+         <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
+        <button onClick={() => navigate("/book")}>Book Appointment</button>
+        <button onClick={() => navigate("/admin/services")}>Manage Services</button>
+        <button onClick={() => navigate("/admin/appointments")}>View Appointments (Admin)</button>
+      </div>
       </div>
 
       <h2 style={{ marginTop: 24 }}>My Appointments</h2>

@@ -2,7 +2,8 @@
   "name": "appointment-app",
   "version": "1.0.0",
   "private": true,
-  "homepage": "https://baronman.github.io/AppointmentsClientSide/",
+  "type": "module",
+  "homepage": "https://Baronman.github.io/AppointmentsClientSide",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
